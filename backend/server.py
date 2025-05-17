@@ -64,11 +64,22 @@ def extract_text_from_pdf(file_content):
         pdf_reader = PyPDF2.PdfReader(io.BytesIO(file_content))
         text = ""
         for page in pdf_reader.pages:
-            text += page.extract_text() + "\n"
+            try:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + "\n"
+            except Exception as e:
+                logging.error(f"Error extracting text from PDF page: {e}")
+                continue
+        
+        # If PyPDF2 fails to extract any text, provide a fallback message
+        if not text.strip():
+            return "Unable to extract text from this PDF. It might be scanned or image-based."
+        
         return text
     except Exception as e:
         logging.error(f"Error extracting text from PDF: {e}")
-        return None
+        return "Unable to extract text from this PDF. It might be corrupted or password-protected."
 
 def extract_text_from_docx(file_content):
     """Extract text from DOCX file content."""
