@@ -87,11 +87,25 @@ def extract_text_from_docx(file_content):
         doc = docx.Document(io.BytesIO(file_content))
         text = ""
         for para in doc.paragraphs:
-            text += para.text + "\n"
+            if para.text:
+                text += para.text + "\n"
+                
+        # Also extract text from tables
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    if cell.text:
+                        text += cell.text + " "
+                text += "\n"
+        
+        # If no text was extracted, return a fallback message
+        if not text.strip():
+            return "Unable to extract text from this DOCX. It might be empty or contain only images."
+            
         return text
     except Exception as e:
         logging.error(f"Error extracting text from DOCX: {e}")
-        return None
+        return "Unable to extract text from this DOCX. It might be corrupted or in an unsupported format."
 
 def extract_text_from_gdrive_link(gdrive_link):
     """Extract text from Google Drive document."""
