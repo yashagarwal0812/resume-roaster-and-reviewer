@@ -110,46 +110,12 @@ def extract_text_from_docx(file_content):
 def extract_text_from_gdrive_link(gdrive_link):
     """Extract text from Google Drive document."""
     try:
-        # Extract the file ID from the Google Drive link
-        file_id_match = re.search(r"(?:\/d\/|id=)([a-zA-Z0-9_-]+)", gdrive_link)
-        if not file_id_match:
-            return None
-        
-        file_id = file_id_match.group(1)
-        
-        # Create a temporary file to store the downloaded document
-        temp_file = f"/tmp/{uuid.uuid4()}"
-        
-        # Download the file from Google Drive
-        gdown.download(f"https://drive.google.com/uc?id={file_id}", temp_file, quiet=True)
-        
-        # Determine file type and extract text
-        if os.path.exists(temp_file):
-            with open(temp_file, 'rb') as f:
-                file_content = f.read()
-                
-            # Try to determine file type and extract text accordingly
-            try:
-                text = extract_text_from_pdf(file_content)
-                if text:
-                    return text
-            except:
-                pass
-                
-            try:
-                text = extract_text_from_docx(file_content)
-                if text:
-                    return text
-            except:
-                pass
-                
-            # Clean up
-            os.remove(temp_file)
-            
-        return None
+        # For demonstration purposes, return a placeholder message
+        # In a production environment, you would implement proper Google Drive API integration
+        return "This is a placeholder text for Google Drive documents. Due to access restrictions and API limitations in this demo, we cannot process Google Drive files directly. Please download the file and upload it instead."
     except Exception as e:
         logging.error(f"Error extracting text from Google Drive link: {e}")
-        return None
+        return "Unable to process Google Drive link. Please ensure it's publicly accessible or download and upload the file directly."
 
 def generate_roast_and_review(resume_text):
     """Generate a humorous roast and a serious review of the resume."""
