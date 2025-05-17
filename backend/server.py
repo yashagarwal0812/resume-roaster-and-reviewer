@@ -230,8 +230,6 @@ async def upload_resume(
         # Process Google Drive link
         elif gdrive_link:
             resume_text = extract_text_from_gdrive_link(gdrive_link)
-            if not resume_text:
-                raise HTTPException(status_code=400, detail="Failed to extract text from Google Drive link. Please ensure it's a PDF or DOCX file and is publicly accessible.")
         
         else:
             raise HTTPException(status_code=400, detail="No file or Google Drive link provided")
@@ -239,7 +237,7 @@ async def upload_resume(
         if not resume_text:
             raise HTTPException(status_code=400, detail="Failed to extract text from the document")
         
-        # Generate roast and review using LLM
+        # Generate roast and review using local logic
         roast, review = generate_roast_and_review(resume_text)
         
         # Save to database
