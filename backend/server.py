@@ -209,9 +209,6 @@ def generate_roast_and_review(resume_text):
         roast = "I tried to roast your resume, but my brain is too fried right now. Maybe your resume is just too hot to handle!\n\nSeriously though, I bet you've got the kind of resume that lists 'proficiency in Microsoft Word' like it's a superpower. And let me guess, you're also 'detail-oriented' and a 'team player'? How original!"
         review = "Your resume could benefit from more specific achievements and metrics to showcase your impact. Consider removing generic statements and focusing on concrete examples of your contributions. A well-structured summary at the top can also help highlight your unique value proposition and career goals."
         return roast, review
-        roast = "I tried to roast your resume, but my AI brain is too fried right now. Maybe your resume is just too hot to handle!"
-        review = "I wanted to give you a proper review, but something went wrong. Your resume is probably breaking new ground that AI can't comprehend yet!"
-        return roast, review
 
 # API Routes
 @api_router.get("/")
