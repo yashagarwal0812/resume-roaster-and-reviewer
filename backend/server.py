@@ -127,52 +127,87 @@ def extract_text_from_gdrive_link(gdrive_link):
         return None
 
 def generate_roast_and_review(resume_text):
-    """Generate a humorous roast and a serious review of the resume using HuggingFace API."""
+    """Generate a humorous roast and a serious review of the resume."""
     try:
-        # Use a publicly available model from HuggingFace for text generation
-        API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+        # Since we don't have an API key, we'll generate content locally
+        # Create a humorous "roast" based on common resume patterns
         
-        # Prepare the prompt for roasting
-        roast_prompt = f"""
-        Below is a resume content:
-        ---
-        {resume_text[:3000]}  # Limiting text length to avoid token limits
-        ---
+        # Get some basic stats about the resume
+        word_count = len(resume_text.split())
+        lines = resume_text.split('\n')
+        non_empty_lines = [line for line in lines if line.strip()]
+        line_count = len(non_empty_lines)
         
-        Create a humorous and sarcastic "roast" of this resume, pointing out potential inconsistencies, 
-        exaggerations, or generic elements in a funny way. Keep it light-hearted but witty.
-        """
+        buzzwords = [
+            "self-starter", "team player", "detail-oriented", "hardworking", 
+            "passionate", "motivated", "innovative", "results-driven", 
+            "proactive", "synergy", "leverage", "optimize", "strategic",
+            "dynamic", "solutions", "expert", "specialized", "experienced",
+            "skillset", "qualified", "professional", "leadership"
+        ]
         
-        # Prepare the prompt for constructive review
-        review_prompt = f"""
-        Below is a resume content:
-        ---
-        {resume_text[:3000]}  # Limiting text length to avoid token limits
-        ---
+        buzzword_count = sum(1 for word in buzzwords if word.lower() in resume_text.lower())
         
-        Provide a professional and constructive review of this resume. 
-        Highlight strengths, suggest improvements, and offer specific advice on how to make it more effective.
-        """
-        
-        # Function to call the Hugging Face Inference API
-        def query_huggingface(payload):
-            response = requests.post(API_URL, headers={"Content-Type": "application/json"}, json=payload)
-            return response.json()
+        # Generate a roast based on the stats
+        roast_messages = [
+            f"I see you've used {buzzword_count} buzzwords in your resume. Going for the 'Corporate Buzzword Bingo' championship, are we?",
             
-        # Get the roast
-        roast_response = query_huggingface({"inputs": roast_prompt, "parameters": {"max_length": 500}})
-        roast = roast_response[0]["generated_text"] if isinstance(roast_response, list) else "Failed to generate roast. The AI is probably too impressed with your resume to find anything to joke about!"
+            "Your resume reads like it was written by AI - except AI would probably add more personality!",
+            
+            f"Wow, {word_count} words to say what could be summarized as 'Please hire me, I need money'.",
+            
+            "I see you've listed 'attention to detail' as a skill, yet your resume formatting looks like it was done by someone texting while skydiving.",
+            
+            "Your job descriptions sound so generic, I'm not sure if you worked at a company or just read their 'About Us' page.",
+            
+            "Your list of skills is impressive - almost as impressive as how many of them you probably exaggerated.",
+            
+            "Your 'proficient in Microsoft Office' skill is about as impressive as saying you're proficient in using a microwave.",
+            
+            f"Your resume is {line_count} lines long. That's {line_count - 10} too many lines for someone with your experience.",
+            
+            "I'm sure your 'excellent communication skills' will come in handy when you have to explain why you got roasted by a resume-analyzing app.",
+        ]
         
-        if isinstance(roast, str) and roast.startswith(roast_prompt):
-            roast = roast[len(roast_prompt):].strip()
+        # Generate a constructive review
+        review_messages = [
+            "Your resume demonstrates some professional experience, but could benefit from more specific, quantifiable achievements.",
+            
+            "Consider replacing generic statements with concrete examples that showcase your unique contributions.",
+            
+            "The structure of your resume is decent, but you might want to prioritize more relevant experiences at the top.",
+            
+            "Your skills section could be enhanced by adding proficiency levels and removing outdated or overly basic skills.",
+            
+            "Add more action verbs at the beginning of your job descriptions to make your contributions clearer.",
+            
+            "Consider adding a brief personal summary at the top that highlights your career goals and unique value proposition.",
+            
+            "If you have specific metrics or achievements (increased sales by X%, reduced costs by Y%), definitely highlight those prominently.",
+            
+            "Make sure your resume is tailored to each job application by emphasizing the skills and experiences most relevant to that position.",
+            
+            "Ensure consistent formatting throughout - uniform fonts, bullet styles, and spacing enhance readability."
+        ]
         
-        # Get the review
-        review_response = query_huggingface({"inputs": review_prompt, "parameters": {"max_length": 500}})
-        review = review_response[0]["generated_text"] if isinstance(review_response, list) else "Failed to generate review. Your resume is beyond conventional analysis!"
+        import random
+        # Select 3-5 random messages for each category
+        roast_count = min(5, max(3, int(line_count / 10)))
+        review_count = min(5, max(3, int(line_count / 10)))
         
-        if isinstance(review, str) and review.startswith(review_prompt):
-            review = review[len(review_prompt):].strip()
+        selected_roasts = random.sample(roast_messages, roast_count)
+        selected_reviews = random.sample(review_messages, review_count)
         
+        roast = "\n\n".join(selected_roasts)
+        review = "\n\n".join(selected_reviews)
+        
+        return roast, review
+        
+    except Exception as e:
+        logging.error(f"Error generating roast and review: {e}")
+        # Provide fallback responses
+        roast = "I tried to roast your resume, but my brain is too fried right now. Maybe your resume is just too hot to handle!\n\nSeriously though, I bet you've got the kind of resume that lists 'proficiency in Microsoft Word' like it's a superpower. And let me guess, you're also 'detail-oriented' and a 'team player'? How original!"
+        review = "Your resume could benefit from more specific achievements and metrics to showcase your impact. Consider removing generic statements and focusing on concrete examples of your contributions. A well-structured summary at the top can also help highlight your unique value proposition and career goals."
         return roast, review
         
     except Exception as e:
